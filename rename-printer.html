@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<style>
+*{ box-sizing:border-box; }
+
+:root{
+  --bg:#0f0f10;
+  --field:#2a2a2a;
+  --text:#fff;
+  --border:#2f2f2f;
+  --accent:#2f6bff;
+}
+.light{
+  --bg:#f2f4f8;
+  --field:#ffffff;
+  --text:#111;
+  --border:#cfd6e4;
+}
+
+html,body{
+  margin:0;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+}
+
+.wrapper{ padding:18px; }
+
+h2{ margin:0 0 18px; 
+    text-align:center;
+}
+
+input{
+  width:100%;
+  background:var(--field);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:12px;
+  color:var(--text);
+}
+
+.actions{
+  margin-top:16px;
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+}
+
+button{
+  border:none;
+  border-radius:10px;
+  padding:10px 18px;
+  cursor:pointer;
+}
+
+.save{ background:var(--accent); color:#fff }
+.cancel{ background:#444; color:#fff }
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h2 id="title"></h2>
+  <input id="name" autocomplete="off" autofocus>
+  <div class="actions">
+    <button class="cancel" id="cancel"></button>
+    <button class="save" id="save"></button>
+  </div>
+</div>
+
+<script>
+/* ===== THEME ===== */
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light')
+}
+
+/* ===== DOM ===== */
+const titleEl   = document.getElementById('title')
+const nameEl    = document.getElementById('name')
+const saveBtn   = document.getElementById('save')
+const cancelBtn = document.getElementById('cancel')
+
+/* ===== LANG ===== */
+const dict = {
+  en:{ title:'Rename printer', save:'Save', cancel:'Cancel' },
+  ru:{ title:'Переименовать принтер', save:'Сохранить', cancel:'Отмена' }
+}
+const lang = localStorage.getItem('lang') || 'en'
+
+titleEl.innerText   = dict[lang].title
+saveBtn.innerText   = dict[lang].save
+cancelBtn.innerText = dict[lang].cancel
+
+/* ===== ACTIONS ===== */
+saveBtn.onclick = () => {
+  const newName = nameEl.value.trim()
+  if (!newName) return
+  window.renamePrinterAPI.submit(newName)
+}
+
+cancelBtn.onclick = () => {
+  window.renamePrinterAPI.cancel()
+}
+
+</script>
+</body>
+</html>

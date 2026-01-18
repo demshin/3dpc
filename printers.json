@@ -1,0 +1,27 @@
+{
+  "printers": {
+    "Default Printer": {
+      "prices": {
+        "PLA": 40,
+        "PETG": 60,
+        "ABS": 55
+      },
+      "power": 120,
+      "tariff": 0.15,
+      "amort": 0.5,
+      "markup": 3
+    },
+    "CC2": {
+      "prices": {
+        "PLA": 10,
+        "PETG": 10,
+        "ABS": 10
+      },
+      "power": 300,
+      "tariff": 0.05,
+      "amort": 0.5,
+      "markup": 3
+    }
+  },
+  "activePrinter": "CC2"
+}

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>3DPC (3D Print Calculator)</title>
+
+<style>
+:root{
+  --bg:#121212;
+  --card:#1e1e1e;
+  --text:#ffffff;
+  --muted:#aaaaaa;
+  --input:#2a2a2a;
+  --border:#333;
+  --accent:#3a6cff;
+  --shadow:0 10px 30px rgba(0,0,0,.4);
+}
+.light{
+  --bg:#f2f4f8;
+  --card:#ffffff;
+  --text:#111;
+  --muted:#555;
+  --input:#f3f5fb;
+  --border:#d9deea;
+  --shadow:0 10px 24px rgba(0,0,0,.08);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+}
+.app{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+/* HEADER */
+.header{
+  height:52px;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+.active-printer{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-weight:600;
+}
+.printer-emoji{
+  font-size:22px;
+  line-height:1;
+}
+.controls span{
+  margin-left:14px;
+  cursor:pointer;
+  color:var(--muted);
+}
+
+/* CONTENT */
+.content{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center; 
+}
+.panel{
+  width:900px;
+  display:grid;
+  grid-template-columns:1.2fr 1fr;
+  gap:26px;
+}
+.card{
+  background:var(--card);
+  border-radius:18px;
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+
+/* FORM */
+label{
+  display:block;
+  margin-top:10px;
+  font-size:12px;
+  color:var(--muted);
+}
+
+
+input,select{
+  width:100%;
+  margin-top:4px;
+  padding:8px 10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:var(--input);
+  color:var(--text);
+}
+.text-blue{
+  color:#3a6cff;
+  font-weight:700;
+}
+.row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+button{
+  margin-top:14px;
+  width:100%;
+  padding:10px;
+  border-radius:12px;
+  border:none;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
+  cursor:pointer;
+}
+
+/* RESULT */
+.result{
+  font-size:44px;
+  font-weight:800;
+}
+.breakdown{
+  margin-top:10px;
+  border-top:1px dashed var(--border);
+  padding-top:10px;
+}
+.breakdown span{
+  display:flex;
+  justify-content:space-between;
+  font-size:12px;
+  margin-top:6px;
+}
+.breakdown b{font-weight:700}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div class="header">
+  <div class="active-printer">
+    <span class="printer-emoji"></span>
+    <span id="printerName">—</span>
+  </div>
+  <div class="controls">
+    <span onclick="toggleLang()">RU / EN</span>
+    <span onclick="toggleTheme()">🌙 / ☀️</span>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+<div class="panel">
+
+<!-- LEFT -->
+<div class="card">
+  <label class="text-blue" data-i="weight"></label>
+  <input id="weight" value="65">
+
+  <div class="row">
+    <div>
+      <label class="text-blue" data-i="time"></label>
+      <input id="time" value="33">
+    </div>
+    <div>
+      <label class="text-blue" data-i="qty"></label>
+      <input id="qty" value="12">
+    </div>
+  </div>
+
+  <label data-i="material"></label>
+  <select id="material">
+    <option>PLA</option>
+    <option>PETG</option>
+    <option>ABS</option>
+  </select>
+
+  <label data-i="complexity"></label>
+  <input id="complexity" value="1">
+
+  <label data-i="prototype"></label>
+  <select id="prototype">
+    <option value="0" data-i="no"></option>
+    <option value="1" data-i="yes"></option>
+  </select>
+
+  <label data-i="modeling"></label>
+  <input id="modeling" value="10">
+
+  <label data-i="post"></label>
+  <input id="post" value="2">
+
+  <label data-i="other"></label>
+  <input id="other" value="0">
+
+  <button onclick="calculate()" data-i="calc"></button>
+</div>
+
+<!-- RIGHT -->
+<div class="card">
+  <div class="result" id="total">$0.00</div>
+  <div class="breakdown" id="details"></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+/* ===== DOM ===== */
+const $ = id => document.getElementById(id)
+const weight=$('weight'), time=$('time'), qty=$('qty'), complexity=$('complexity')
+const material=$('material'), prototype=$('prototype')
+const modeling=$('modeling'), post=$('post'), other=$('other')
+const totalEl=$('total'), details=$('details'), printerName=$('printerName')
+
+/* ===== LANG ===== */
+let lang = localStorage.getItem('lang') || 'ru'
+const dict={
+ru:{
+weight:'Вес детали (г)',material:'Тип пластика',time:'Время печати (мин)',
+qty:'Количество',complexity:'Коэффициент сложности',prototype:'Прототип',
+no:'Нет',yes:'Да',modeling:'Моделирование ($)',post:'Постобработка ($/шт)',
+other:'Прочие услуги ($)',calc:'Рассчитать',
+materialCost:'Материал',electricity:'Электроэнергия',amort:'Амортизация',
+print:'Стоимость печати',modelingCost:'Моделирование',
+postCost:'Постобработка',otherCost:'Прочие услуги',prototypeCost:'Прототип'
+},
+en:{
+weight:'Weight (g)',material:'Material',time:'Print time (min)',
+qty:'Quantity',complexity:'Complexity factor',prototype:'Prototype',
+no:'No',yes:'Yes',modeling:'Modeling ($)',post:'Post-processing ($/unit)',
+other:'Other services ($)',calc:'Calculate',
+materialCost:'Material',electricity:'Electricity',amort:'Depreciation',
+print:'Printing cost',modelingCost:'Modeling',
+postCost:'Post-processing',otherCost:'Other',prototypeCost:'Prototype'
+}}
+function applyLang(){
+  document.querySelectorAll('[data-i]').forEach(e=>{
+    e.innerText = dict[lang][e.dataset.i]
+  })
+
+  if (window.menuAPI?.setLang) {
+    window.menuAPI.setLang(lang)
+  }
+}
+function toggleLang(){
+  lang=lang==='ru'?'en':'ru'
+  localStorage.setItem('lang',lang)
+  applyLang()
+}
+
+/* ===== THEME ===== */
+function toggleTheme(){
+  document.body.classList.toggle('light')
+  localStorage.setItem('theme',
+    document.body.classList.contains('light')?'light':'dark')
+}
+if(localStorage.getItem('theme')==='light')
+  document.body.classList.add('light')
+
+/* ===== CALC ===== */
+async function calculate(){
+  const data = await window.printersAPI.load()
+  const s = data.printers[data.activePrinter]
+  printerName.innerText = data.activePrinter
+
+  const w=+weight.value, t=+time.value, q=+qty.value, c=+complexity.value
+  const materialCost=(w/1000)*s.prices[material.value]
+  const electricity=(s.power/1000)*(t/60)*s.tariff
+  const amort=s.amort*(t/60)
+  const printBase=(materialCost+electricity+amort)*c
+  const printCost=printBase*s.markup
+  const proto=prototype.value==='1'?printCost*0.75:0
+
+  const total=
+    (printCost*q)+(+modeling.value)+(+post.value*q)+(+other.value)+proto
+
+  totalEl.innerText=`$${total.toFixed(2)}`
+  details.innerHTML=`
+    <span>${dict[lang].materialCost} <b>$${materialCost.toFixed(2)}</b></span>
+    <span>${dict[lang].electricity} <b>$${electricity.toFixed(2)}</b></span>
+    <span>${dict[lang].amort} <b>$${amort.toFixed(2)}</b></span>
+    <span>${dict[lang].print} <b>$${printCost.toFixed(2)}</b></span>
+    <span>${dict[lang].modelingCost} <b>$${(+modeling.value).toFixed(2)}</b></span>
+    <span>${dict[lang].postCost} <b>$${(+post.value*q).toFixed(2)}</b></span>
+    <span>${dict[lang].otherCost} <b>$${(+other.value).toFixed(2)}</b></span>
+    <span>${dict[lang].prototypeCost} <b>$${proto.toFixed(2)}</b></span>
+  `
+}
+
+/* ENTER */
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter') calculate()
+})
+
+applyLang()
+</script>
+</body>
+</html>

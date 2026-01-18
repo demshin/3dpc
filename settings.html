@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Settings</title>
+
+<style>
+*{ box-sizing:border-box; }
+
+:root{
+  --bg:#0f0f10;
+  --field:#2a2a2a;
+  --text:#ffffff;
+  --muted:#a0a0a0;
+  --accent:#2f6bff;
+  --border:#2f2f2f;
+}
+
+.light{
+  --bg:#f2f4f8;
+  --field:#ffffff;
+  --text:#111;
+  --muted:#555;
+  --border:#cfd6e4;
+}
+
+html,body{
+  margin:0;
+  height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+  overflow-x:hidden;
+}
+
+.wrapper{
+  padding:18px;
+}
+
+h1{
+  margin:0 0 16px;
+  font-size:20px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+label{
+  font-size:12px;
+  color:var(--muted);
+}
+
+input{
+  width:100%;
+  background:var(--field);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 12px;
+  color:var(--text);
+  font-size:14px;
+}
+
+.full{ grid-column:1 / -1; }
+
+.actions{
+  margin-top:16px;
+  display:flex;
+  justify-content:flex-end;
+}
+
+button{
+  background:var(--accent);
+  border:none;
+  border-radius:10px;
+  padding:10px 20px;
+  color:#fff;
+  font-size:14px;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+<div class="wrapper">
+  <h1 id="title"></h1>
+
+  <div class="grid">
+    <div class="field"><label id="l_pla"></label><input id="pla"></div>
+    <div class="field"><label id="l_petg"></label><input id="petg"></div>
+    <div class="field"><label id="l_abs"></label><input id="abs"></div>
+    <div class="field"><label id="l_power"></label><input id="power"></div>
+    <div class="field"><label id="l_tariff"></label><input id="tariff"></div>
+    <div class="field"><label id="l_amort"></label><input id="amort"></div>
+    <div class="field full"><label id="l_markup"></label><input id="markup"></div>
+  </div>
+
+  <div class="actions">
+    <button id="save"></button>
+  </div>
+</div>
+
+<script>
+/* THEME */
+if(localStorage.getItem('theme')==='light'){
+  document.body.classList.add('light')
+}
+
+/* LANGUAGE */
+const dict={
+  en:{title:'⚙ Settings',save:'Save',pla:'PLA price ($/kg)',petg:'PETG price ($/kg)',abs:'ABS price ($/kg)',power:'Printer power (W)',tariff:'Electricity tariff ($/kWh)',amort:'Depreciation ($/hour)',markup:'Price multiplier (margin on cost)'},
+  ru:{title:'⚙ Настройки',save:'Сохранить',pla:'Цена PLA ($/кг)',petg:'Цена PETG ($/кг)',abs:'Цена ABS ($/кг)',power:'Мощность принтера (Вт)',tariff:'Тариф электричества ($/кВт·ч)',amort:'Амортизация ($/час)',markup:'Множитель стоимости (маржа)'}
+}
+const lang=localStorage.getItem('lang')||'en'
+const t=dict[lang]
+
+title.innerText=t.title
+save.innerText=t.save
+l_pla.innerText=t.pla
+l_petg.innerText=t.petg
+l_abs.innerText=t.abs
+l_power.innerText=t.power
+l_tariff.innerText=t.tariff
+l_amort.innerText=t.amort
+l_markup.innerText=t.markup
+
+;(async()=>{
+  const {name,settings}=await window.settingsAPI.getActive()
+  title.innerText+=`: ${name}`
+  pla.value=settings.prices.PLA
+  petg.value=settings.prices.PETG
+  abs.value=settings.prices.ABS
+  power.value=settings.power
+  tariff.value=settings.tariff
+  amort.value=settings.amort
+  markup.value=settings.markup
+})()
+
+save.onclick=async()=>{
+  await window.settingsAPI.saveActive({
+    prices:{PLA:+pla.value,PETG:+petg.value,ABS:+abs.value},
+    power:+power.value,
+    tariff:+tariff.value,
+    amort:+amort.value,
+    markup:+markup.value
+  })
+  window.close()
+}
+
+</script>
+</body>
+</html>
