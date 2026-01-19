@@ -110,8 +110,13 @@ button{
 
 <script>
 /* THEME */
-if(localStorage.getItem('theme')==='light'){
-  document.body.classList.add('light')
+const savedTheme = localStorage.getItem('theme')
+if (savedTheme) {
+  if (savedTheme === 'light') document.body.classList.add('light')
+} else {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light')
+  }
 }
 
 /* LANGUAGE */
@@ -119,7 +124,8 @@ const dict={
   en:{title:'⚙ Settings',save:'Save',pla:'PLA price ($/kg)',petg:'PETG price ($/kg)',abs:'ABS price ($/kg)',power:'Printer power (W)',tariff:'Electricity tariff ($/kWh)',amort:'Depreciation ($/hour)',markup:'Price multiplier (margin on cost)'},
   ru:{title:'⚙ Настройки',save:'Сохранить',pla:'Цена PLA ($/кг)',petg:'Цена PETG ($/кг)',abs:'Цена ABS ($/кг)',power:'Мощность принтера (Вт)',tariff:'Тариф электричества ($/кВт·ч)',amort:'Амортизация ($/час)',markup:'Множитель стоимости (маржа)'}
 }
-const lang=localStorage.getItem('lang')||'en'
+const systemLang=(navigator.language||navigator.userLanguage).startsWith('ru')?'ru':'en'
+const lang=localStorage.getItem('lang')||systemLang
 const t=dict[lang]
 
 title.innerText=t.title

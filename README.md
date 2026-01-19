@@ -91,19 +91,23 @@ It is designed for makers, studios, and small manufacturing setups that need a f
 ______________________________________
 **System Requirements**
 
-Operating System: Windows 10 / 11 (64-bit)
+**Windows**
+- Operating System: Windows 10 / 11 (64-bit)
+- Hardware: CPU: Dual-core 2.0 GHz or higher
+- RAM: 4 GB minimum (8 GB recommended)
+- Disk space: ~300 MB free
+- Screen resolution: 1280×720 or higher
 
-Hardware: CPU: Dual-core 2.0 GHz or higher
-
-RAM: 4 GB minimum (8 GB recommended)
-
-Disk space: ~300 MB free
-
-Screen resolution: 1280×720 or higher
+**macOS**
+- Operating System: macOS 10.13 (High Sierra) or later
+- Architecture: Intel (x64) and Apple Silicon (ARM64) supported
+- RAM: 4 GB minimum (8 GB recommended)
+- Disk space: ~300 MB free
+- Screen resolution: 1280×720 or higher
 
 Software: No additional software required (all dependencies are included in the installer)
 
-**Full Changelog**: https://github.com/CROSS-Graphics/3dpc/commits/v1.0.0
+**Full Changelog**: https://github.com/demshin/3dpc/commits/main
 
 ## 📸 Screenshots
 

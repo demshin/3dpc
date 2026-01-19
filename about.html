@@ -112,8 +112,13 @@ a:hover{
 
 <script>
 /* THEME */
-if (localStorage.getItem('theme') === 'light') {
-  document.body.classList.add('light')
+const savedTheme = localStorage.getItem('theme')
+if (savedTheme) {
+  if (savedTheme === 'light') document.body.classList.add('light')
+} else {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light')
+  }
 }
 
 /* LANGUAGE */
@@ -134,7 +139,8 @@ const dict = {
   }
 }
 
-const lang = localStorage.getItem('lang') || 'en'
+const systemLang = (navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en'
+const lang = localStorage.getItem('lang') || systemLang
 const t = dict[lang]
 
 title.innerText   = t.title

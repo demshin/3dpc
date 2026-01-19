@@ -74,8 +74,13 @@ button{
 
 <script>
 /* ===== THEME ===== */
-if (localStorage.getItem('theme') === 'light') {
-  document.body.classList.add('light')
+const savedTheme = localStorage.getItem('theme')
+if (savedTheme) {
+  if (savedTheme === 'light') document.body.classList.add('light')
+} else {
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light')
+  }
 }
 
 /* ===== DOM ===== */
@@ -89,7 +94,8 @@ const dict = {
   en:{ title:'Rename printer', save:'Save', cancel:'Cancel' },
   ru:{ title:'Переименовать принтер', save:'Сохранить', cancel:'Отмена' }
 }
-const lang = localStorage.getItem('lang') || 'en'
+const systemLang = (navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en'
+const lang = localStorage.getItem('lang') || systemLang
 
 titleEl.innerText   = dict[lang].title
 saveBtn.innerText   = dict[lang].save

@@ -3,3 +3,9 @@ dist/
 win-unpacked/
 *.exe
 *.zip
+
+# Claude Code files
+.claude/
+CODE_ANALYSIS_REPORT.md
+PROJECT_INDEX.md
+PROJECT_INDEX.json

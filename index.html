@@ -224,7 +224,9 @@ const modeling=$('modeling'), post=$('post'), other=$('other')
 const totalEl=$('total'), details=$('details'), printerName=$('printerName')
 
 /* ===== LANG ===== */
-let lang = localStorage.getItem('lang') || 'ru'
+// Detect system language (default to 'en')
+const systemLang = (navigator.language || navigator.userLanguage).startsWith('ru') ? 'ru' : 'en'
+let lang = localStorage.getItem('lang') || systemLang
 const dict={
 ru:{
 weight:'Вес детали (г)',material:'Тип пластика',time:'Время печати (мин)',
@@ -265,8 +267,17 @@ function toggleTheme(){
   localStorage.setItem('theme',
     document.body.classList.contains('light')?'light':'dark')
 }
-if(localStorage.getItem('theme')==='light')
-  document.body.classList.add('light')
+
+// Auto-detect system theme
+const savedTheme = localStorage.getItem('theme')
+if (savedTheme) {
+  if (savedTheme === 'light') document.body.classList.add('light')
+} else {
+  // Use system preference
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+    document.body.classList.add('light')
+  }
+}
 
 /* ===== CALC ===== */
 async function calculate(){
@@ -302,6 +313,13 @@ async function calculate(){
 document.addEventListener('keydown',e=>{
   if(e.key==='Enter') calculate()
 })
+
+/* INIT */
+;(async()=>{
+  // Load active printer name on startup
+  const data = await window.printersAPI.load()
+  printerName.innerText = data.activePrinter
+})()
 
 applyLang()
 </script>

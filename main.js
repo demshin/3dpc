@@ -10,7 +10,8 @@ let savePrinterWindow
 let renamePrinterWindow
 let aboutWindow
 let renameOldName = null
-let currentLang = 'ru'
+// Detect system language (default to 'en')
+let currentLang = (app.getLocale().startsWith('ru')) ? 'ru' : 'en'
 
 // ================== MAIN WINDOW ==================
 function createMainWindow() {
@@ -162,42 +163,65 @@ function buildPrintersMenu() {
 function setMenu() {
   const L = {
     ru: {
-      file: '🗄️ Файл',
-      save: '💾 Сохранить принтер',
-      printers: '🖨️ Принтеры',
+      file: 'Файл',
+      save: 'Сохранить принтер',
+      printers: 'Принтеры',
       exit: 'Выход',
-      settings: '⚙ Настройки',
-      about: 'ℹ О программе'
+      settings: 'Настройки',
+      about: 'О программе'
     },
     en: {
-      file: '🗄️ File',
-      save: '💾 Save printer',
-      printers: '🖨️ Printers',
+      file: 'File',
+      save: 'Save Printer',
+      printers: 'Printers',
       exit: 'Exit',
-      settings: '⚙ Settings',
-      about: 'ℹ About'
+      settings: 'Settings',
+      about: 'About'
     }
   }[currentLang]
 
-  const menu = Menu.buildFromTemplate([
+  const isMac = process.platform === 'darwin'
+
+  const template = [
+    // macOS app menu
+    ...(isMac ? [{
+      label: app.name,
+      submenu: [
+        { label: L.about, click: createAboutWindow },
+        { type: 'separator' },
+        { label: L.settings, click: createSettingsWindow },
+        { type: 'separator' },
+        { role: 'hide' },
+        { role: 'hideOthers' },
+        { role: 'unhide' },
+        { type: 'separator' },
+        { role: 'quit' }
+      ]
+    }] : []),
+    // File menu
     {
       label: L.file,
       submenu: [
         { label: L.save, click: openSavePrinterWindow },
         { label: L.printers, submenu: buildPrintersMenu() },
         { type: 'separator' },
-        { role: 'quit', label: L.exit }
+        ...(isMac ? [] : [{ role: 'quit', label: L.exit }])
       ]
     },
-    { label: L.settings, click: createSettingsWindow },
-    { label: L.about, click: createAboutWindow }
-  ])
+    // Settings menu (Windows only)
+    ...(!isMac ? [{ label: L.settings, click: createSettingsWindow }] : []),
+    // About menu (Windows only)
+    ...(!isMac ? [{ label: L.about, click: createAboutWindow }] : [])
+  ]
 
+  const menu = Menu.buildFromTemplate(template)
   Menu.setApplicationMenu(menu)
 }
 
 // ================== APP ==================
 app.whenReady().then(() => {
+  // Ensure language is set before creating menu
+  currentLang = (app.getLocale().startsWith('ru')) ? 'ru' : 'en'
   setMenu()
   createMainWindow()
 })
