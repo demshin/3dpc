@@ -42,10 +42,6 @@ It is designed for makers, studios, and small manufacturing setups that need a f
 
 ✔ Separate profiles for different printers
 
-**⚠️ Note:**
-This application is a pilot version. Bugs and calculation inaccuracies may occur.
-Use the results as an estimated cost reference.
-
 ## RU
 
 **3DPC (3D Print Calculator) — настольное приложение для точного расчёта стоимости 3D-печати.**
@@ -88,9 +84,6 @@ Use the results as an estimated cost reference.
 
 ✔ Отдельные профили для разных принтеров
 
-**⚠️ Примечание:**
-Приложение находится в пилотной версии. Возможны ошибки и неточности в работе.
-Используйте результаты расчётов как ориентировочные.
 ______________________________________
 **System Requirements**
 
@@ -110,14 +103,36 @@ Software: No additional software required (all dependencies are included in the 
 
 ## 📸 Screenshots
 
-### Main window (Dark theme)
-![Main Dark](screenshots/main-dark.png)
+| Dark theme | Light theme |
+|-----------|-------------|
+| ![](screenshots/main-dark.png) | ![](screenshots/main-light.png) |
 
-### Main window (Light theme)
-![Main Light](screenshots/main-light.png)
+| Settings | About |
+|-----------|-------------|
+| ![](screenshots/settings.png) | ![](screenshots/about.png) |
 
-### Printer settings
-![Settings](screenshots/settings.png)
+## ☕ Support the project
 
-### About
-![About](screenshots/about.png)
+If **3DPC (3D Print Calculator)** is useful for you, you can support its development:
+
+- ⭐ Star this repository on GitHub
+- ☕ Support via Ko-fi: https://ko-fi.com/cross_graphics
+
+This project is developed with enthusiasm and is currently in a **pilot/testing stage**.  
+Some features may change, and minor bugs may occur.
+
+Your support helps improve the application and develop new features.  
+Thank you for using **3DPC** 💙
+
+## ☕ Поддержать проект
+
+Если **3DPC (3D Print Calculator)** оказался для вас полезным, вы можете поддержать его развитие:
+
+- ⭐ Поставить звезду репозиторию на GitHub
+- ☕ Поддержать проект через Ko-fi: https://ko-fi.com/cross_graphics
+
+Проект разрабатывается с энтузиазмом и находится в **пилотной/тестовой версии**.  
+Возможны небольшие ошибки и изменения в функциональности.
+
+Ваша поддержка помогает развивать приложение и добавлять новые возможности.  
+Спасибо, что используете **3DPC** 💙
